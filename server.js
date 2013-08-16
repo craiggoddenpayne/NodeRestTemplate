@@ -1,27 +1,21 @@
 ﻿var restify = require('restify');
 var server = restify.createServer({ name: 'TripleTriadApi' });
-Setup(controllerNotFound, actionNotFound);
+var testController = require("./Controllers/Test.js");
 
-function Api() { }
-var api = new Api();
-
-/*  add to the Api prototype to add new methods.
-example: the following method will be called from /api/controller/action when using a get*/
-Api.prototype.Controller = {
-    GetAction: function (req, res) {
-        res.send("Default action on controller");
-    }
-};
-
+var api = new MvcApi();
+function MvcApi() {
+    this.testController = new testController.TestController();
+}
 
 function controllerNotFound(req, res) {
     res.send("Controller Not Found!");
 }
 function actionNotFound(req, res) {
-    res.send("Controller Not Found!");
+    res.send("Action Not Found!");
 }
 
-function Setup(methodTypes, notFoundControllerHandler, notFoundActionHandler){
+Setup(controllerNotFound, actionNotFound);
+function Setup(notFoundControllerHandler, notFoundActionHandler) {
     
     server.get("/api/:controller/:action", getResponseHandler);
     server.post("/api/:controller/:action", postResponseHandler);
@@ -51,7 +45,7 @@ function Setup(methodTypes, notFoundControllerHandler, notFoundActionHandler){
     
 }
 
-Api.prototype.FindRoute = function(controllerName, actionName, method) {
+MvcApi.prototype.FindRoute = function (controllerName, actionName, method) {
     //find matching controller and action (without case sensitivity)
     for (var controller in api) {
         if (controller.toLowerCase() === controllerName.toLowerCase()) {
